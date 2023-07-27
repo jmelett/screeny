@@ -44,6 +44,7 @@ aldryn_addons.settings.load(locals())
 
 INSTALLED_APPS.extend(
     [
+        'core',
         # Extend the INSTALLED_APPS setting by listing additional applications here
     ]
 )

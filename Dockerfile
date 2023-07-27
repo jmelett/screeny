@@ -14,6 +14,9 @@ FROM divio/base:2.2-py3.9-slim-buster
 # <BOWER>
 # </BOWER>
 
+RUN apt-get update && apt-get install -y libjpeg-dev zlib1g-dev libpng-dev ca-certificates
+ENV PYTHONPATH=/app/src:$PYTHONPATH
+
 # <PYTHON>
 ENV PIP_INDEX_URL=${PIP_INDEX_URL:-https://wheels.aldryn.net/v1/aldryn-extras+pypi/${WHEELS_PLATFORM:-aldryn-baseproject-py3}/+simple/} \
     WHEELSPROXY_URL=${WHEELSPROXY_URL:-https://wheels.aldryn.net/v1/aldryn-extras+pypi/${WHEELS_PLATFORM:-aldryn-baseproject-py3}/}

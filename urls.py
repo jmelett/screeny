@@ -1,9 +1,11 @@
+from django.urls import include, path
+
 import aldryn_addons.urls
 from aldryn_django.utils import i18n_patterns
 
 urlpatterns = (
     [
-        # add your own patterns here
+        path('', include('core.urls')),
     ]
     + aldryn_addons.urls.patterns()
     + i18n_patterns(
