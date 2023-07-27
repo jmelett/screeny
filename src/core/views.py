@@ -1,8 +1,10 @@
 import os
+import requests
+from wsgiref.util import FileWrapper
 
 from django.conf import settings
 from django.db.models import F
-from django.http import FileResponse, Http404, HttpResponse
+from django.http import FileResponse, Http404, HttpResponse, StreamingHttpResponse
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
 from django.views.generic import TemplateView
@@ -17,7 +19,7 @@ class HomeView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         return context
-    
+
 
 class FileResponseWithClose(FileResponse):
     def __init__(self, *args, **kwargs):
@@ -50,9 +52,20 @@ def upload_screenshot(request):
 @api_view(["GET"])
 def get_screenshot(request, uuid):
     screenshot = get_object_or_404(Screenshot, uuid=uuid)
-    screenshot.views = F("views") + 1
+    screenshot.views += 1
     screenshot.save()
 
-    image_path = screenshot.image.path
-    file = open(image_path, "rb")
-    return FileResponseWithClose(file, file=file)
+    if settings.DEFAULT_STORAGE_DSN.startswith('file://'):
+        # If using local storage, open the file directly.
+        file = open(screenshot.image.path, "rb")
+        response = FileResponse(file)
+
+    else:
+        # If using S3 or another cloud storage, download the file.
+        image_url = screenshot.image.url
+        response = requests.get(image_url, stream=True)
+        response = StreamingHttpResponse(
+            FileWrapper(response.raw), content_type="image/*"
+        )
+
+    return response
