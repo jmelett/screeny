@@ -3,12 +3,21 @@ import os
 from django.conf import settings
 from django.db.models import F
 from django.http import FileResponse, Http404, HttpResponse
-from django.urls import reverse
 from django.shortcuts import get_object_or_404
+from django.urls import reverse
+from django.views.generic import TemplateView
 
 from rest_framework.decorators import api_view
 from .models import Screenshot
 
+
+class HomeView(TemplateView):
+    template_name = "base.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+    
 
 class FileResponseWithClose(FileResponse):
     def __init__(self, *args, **kwargs):

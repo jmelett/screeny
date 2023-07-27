@@ -1,7 +1,8 @@
 from django.urls import path
-from . import views
+from .views import HomeView, upload_screenshot, get_screenshot
 
 urlpatterns = [
-    path("send/", views.upload_screenshot, name="upload_screenshot"),
-    path("share/<uuid:uuid>/", views.get_screenshot, name="get_screenshot"),
+    path('', HomeView.as_view(), name='screeny_project_root'), 
+    path("send/", upload_screenshot, name="upload_screenshot"),
+    path("share/<uuid:uuid>/", get_screenshot, name="get_screenshot"),
 ]
